@@ -23,15 +23,11 @@ export class BooksController {
   }
 
   @Get()
-  async findAll(
-    @Query('page') page = '1',
-    @Query('limit') limit = '10',
-    @Query('search') search = '',
-  ) {
+  async findAll(@Query() query: any) {
     const result = await this.booksService.findAll(
-      Number(page),
-      Number(limit),
-      search,
+      query.page,
+      query.limit,
+      query.search,
     );
 
     return {

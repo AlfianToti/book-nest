@@ -12,7 +12,7 @@ export class Borrow extends Document {
   borrowDate: Date;
   @Prop({ required: true })
   returnDate: Date;
-  @Prop({ required: true, default: false })
+  @Prop({ required: false, default: false })
   returned: boolean;
   @Prop({ required: false, default: false })
   deleted: boolean;
