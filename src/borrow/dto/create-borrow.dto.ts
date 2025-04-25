@@ -13,21 +13,22 @@ export class CreateBorrowDto {
   book: string;
 
   @IsNotEmpty({})
+  @IsString()
   borrowerName: string;
 
   @IsNotEmpty({})
-  @IsString({})
   @Matches(/^\d{4}-\d{2}-\d{2}$/)
   borrowDate: string;
 
   @IsOptional({})
-  @IsString({})
   @Matches(/^\d{4}-\d{2}-\d{2}$/)
   returnDate: string;
 
   @IsOptional({})
+  @IsBoolean()
   returned: boolean;
 
   @IsOptional({})
+  @IsBoolean()
   deleted: boolean;
 }

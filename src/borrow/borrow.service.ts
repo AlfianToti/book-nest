@@ -10,18 +10,55 @@ export class BorrowService {
   constructor(
     @InjectModel(Borrow.name) private readonly borrowModel: Model<Borrow>,
   ) {}
-  async create(createBorrowDto: CreateBorrowDto) {
-    return await this.borrowModel.create(createBorrowDto);
+  create(createBorrowDto: CreateBorrowDto) {
+    return this.borrowModel.create(createBorrowDto);
   }
 
-  async findAll() {
-    return await this.borrowModel
-      .find()
-      .populate({
-        path: 'book',
-        select: 'title author year',
-      })
-      .exec();
+  async findAll(
+    page = 1,
+    limit = 10,
+    search = '',
+  ): Promise<{ data: Borrow[]; total: number; page: number; limit: number }> {
+    const skip = (page - 1) * limit;
+
+    const pipeline: any[] = [
+      { $match: { deleted: false } },
+      {
+        $lookup: {
+          from: 'books', // nama collection book (harus lowercase plural)
+          localField: 'book',
+          foreignField: '_id',
+          as: 'book',
+        },
+      },
+      { $unwind: '$book' },
+    ];
+
+    if (search) {
+      const isNumber = !isNaN(Number(search));
+      pipeline.push({
+        $match: {
+          $or: [
+            { borrowerName: { $regex: search, $options: 'i' } },
+            { 'book.title': { $regex: search, $options: 'i' } },
+            { 'book.author': { $regex: search, $options: 'i' } },
+            ...(isNumber ? [{ 'book.year': Number(search) }] : []),
+          ],
+        },
+      });
+    }
+
+    const totalPipeline = [...pipeline, { $count: 'total' }];
+    const totalResult = await this.borrowModel.aggregate(totalPipeline);
+    const total = totalResult[0]?.total || 0;
+
+    const data = await this.borrowModel.aggregate([
+      ...pipeline,
+      { $skip: skip },
+      { $limit: limit },
+    ]);
+
+    return { data, total, page, limit };
   }
 
   async findOne(id: string) {

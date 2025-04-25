@@ -5,24 +5,31 @@ import {
   Body,
   Patch,
   Param,
-  Delete,
+  Query,
+  Put,
+  UseGuards,
 } from '@nestjs/common';
 import { BorrowService } from './borrow.service';
 import { CreateBorrowDto } from './dto/create-borrow.dto';
-import { UpdateBorrowDto } from './dto/update-borrow.dto';
+import { RolesGuard } from 'src/auth/roles.guard';
 
 @Controller('borrow')
 export class BorrowController {
   constructor(private readonly borrowService: BorrowService) {}
 
+  @UseGuards(new RolesGuard(['admin']))
   @Post()
   create(@Body() createBorrowDto: CreateBorrowDto) {
     return this.borrowService.create(createBorrowDto);
   }
 
   @Get()
-  findAll() {
-    return this.borrowService.findAll();
+  async findAll(@Query() query: any) {
+    return await this.borrowService.findAll(
+      query.page,
+      query.limit,
+      query.search,
+    );
   }
 
   @Get(':id')
@@ -34,9 +41,4 @@ export class BorrowController {
   markReturned(@Param('id') id: string) {
     return this.borrowService.markReturned(id);
   }
-
-  // @Delete(':id')
-  // remove(@Param('id') id: string) {
-  //   return this.borrowService.remove(+id);
-  // }
 }

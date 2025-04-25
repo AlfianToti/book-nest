@@ -67,7 +67,7 @@ export class BooksService {
 
   async softDelete(id: string): Promise<Book> {
     const deleted = await this.bookModel
-      .findByIdAndUpdate(id, { isDeleted: true }, { new: true })
+      .findByIdAndUpdate(id, { deleted: true }, { new: true })
       .exec();
     if (!deleted) throw new NotFoundException(`Book with id ${id} not found`);
     return deleted;
