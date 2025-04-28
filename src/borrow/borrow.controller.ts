@@ -17,7 +17,7 @@ import { RolesGuard } from 'src/auth/roles.guard';
 export class BorrowController {
   constructor(private readonly borrowService: BorrowService) {}
 
-  @UseGuards(new RolesGuard(['admin']))
+  // @UseGuards(new RolesGuard(['admin']))
   @Post()
   create(@Body() createBorrowDto: CreateBorrowDto) {
     return this.borrowService.create(createBorrowDto);
@@ -37,6 +37,7 @@ export class BorrowController {
     return this.borrowService.findOne(id);
   }
 
+  @UseGuards(new RolesGuard(['admin']))
   @Patch(':id')
   markReturned(@Param('id') id: string) {
     return this.borrowService.markReturned(id);
