@@ -23,25 +23,33 @@ export class UsersService {
     search = '',
   ): Promise<{ data: User[]; total: number; page: number; limit: number }> {
     const skip = (page - 1) * limit;
-    const filter: any = { deleted: false };
+    const filter: any = { isDeleted: false };
 
     if (search) {
-      filter['$or'] = [
+      filter.$or = [
         { username: { $regex: search, $options: 'i' } },
         { email: { $regex: search, $options: 'i' } },
       ];
     }
 
-    const users = await this.userModel
-      .find(filter)
-      .skip(skip)
-      .limit(limit)
-      .exec();
-
-    const total = await this.userModel.countDocuments(filter).exec();
+    const [data, total] = await Promise.all([
+      this.userModel
+        .find(filter)
+        .populate({
+          path: 'role',
+          populate: {
+            path: 'permissions',
+            model: 'Privilege',
+          },
+        })
+        .skip(skip)
+        .limit(limit)
+        .exec(),
+      this.userModel.countDocuments(filter),
+    ]);
 
     return {
-      data: users,
+      data,
       total,
       page,
       limit,
@@ -62,7 +70,27 @@ export class UsersService {
     return user;
   }
 
-  async update(id: string, updateUserDto: CreateUserDto) {}
+  async update(id: string, updateUserDto: CreateUserDto) {
+    const updated = await this.userModel
+      .findOneAndUpdate({ _id: id, deleted: false }, updateUserDto, {
+        new: true,
+      })
+      .exec();
+    if (!updated) {
+      throw new NotFoundException(`User with id ${id} not found`);
+    }
+    return updated;
+  }
+
+  async findUserWithRoleAndPermission(id: string): Promise<User | null> {
+    return this.userModel.findById(id).populate({
+      path: 'role',
+      populate: {
+        path: 'permissions',
+        model: 'Privilege',
+      },
+    });
+  }
 
   async softDelete(id: string): Promise<User> {
     const deleted = await this.userModel

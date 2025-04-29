@@ -29,11 +29,11 @@ export class AuthService {
     };
     const accessToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET,
-      expiresIn: '15m',
+      expiresIn: '24h',
     });
     const refreshToken = this.jwtService.sign(payload, {
       secret: process.env.JWT_SECRET1,
-      expiresIn: '7d',
+      expiresIn: '30d',
     });
     return { accessToken, refreshToken };
   }

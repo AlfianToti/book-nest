@@ -25,13 +25,13 @@ export class BorrowService {
       { $match: { deleted: false } },
       {
         $lookup: {
-          from: 'books', // nama collection book (harus lowercase plural)
-          localField: 'book',
+          from: 'books',
+          localField: 'books',
           foreignField: '_id',
-          as: 'book',
+          as: 'books',
         },
       },
-      { $unwind: '$book' },
+      { $unwind: '$books' },
     ];
 
     if (search) {
@@ -40,9 +40,9 @@ export class BorrowService {
         $match: {
           $or: [
             { borrowerName: { $regex: search, $options: 'i' } },
-            { 'book.title': { $regex: search, $options: 'i' } },
-            { 'book.author': { $regex: search, $options: 'i' } },
-            ...(isNumber ? [{ 'book.year': Number(search) }] : []),
+            { 'books.title': { $regex: search, $options: 'i' } },
+            { 'books.author': { $regex: search, $options: 'i' } },
+            ...(isNumber ? [{ 'books.year': Number(search) }] : []),
           ],
         },
       });
@@ -62,7 +62,7 @@ export class BorrowService {
   }
 
   async findOne(id: string) {
-    const borrow = await this.borrowModel.findById(id).populate('book');
+    const borrow = await this.borrowModel.findById(id).populate('books');
     if (!borrow) {
       throw new NotFoundException(`Borrow with id ${id} not found`);
     }

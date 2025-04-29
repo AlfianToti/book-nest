@@ -1,4 +1,5 @@
 import {
+  IsArray,
   IsBoolean,
   IsDateString,
   IsMongoId,
@@ -9,8 +10,10 @@ import {
 } from 'class-validator';
 
 export class CreateBorrowDto {
+  @IsNotEmpty()
+  @IsArray()
   @IsMongoId({})
-  book: string;
+  books: string[];
 
   @IsNotEmpty({})
   @IsString()

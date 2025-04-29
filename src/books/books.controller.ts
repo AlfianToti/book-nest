@@ -9,10 +9,13 @@ import {
   Delete,
   Query,
   Put,
+  UseGuards,
 } from '@nestjs/common';
 import { BooksService } from './books.service';
 import { CreateBookDto } from './dto/create-book.dto';
+import { Permissions } from 'src/common/decorators/permissions.decorator';
 
+@Permissions('book')
 @Controller('books')
 export class BooksController {
   constructor(private readonly booksService: BooksService) {}

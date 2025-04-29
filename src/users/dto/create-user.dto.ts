@@ -1,5 +1,6 @@
 import {
   IsEmail,
+  IsMongoId,
   IsNotEmpty,
   IsOptional,
   IsString,
@@ -19,7 +20,7 @@ export class CreateUserDto {
   @MinLength(8)
   password: string;
 
-  @IsOptional()
-  @IsString()
+  @IsNotEmpty()
+  @IsMongoId()
   role: string;
 }
