@@ -11,13 +11,13 @@ import {
 } from '@nestjs/common';
 import { BorrowService } from './borrow.service';
 import { CreateBorrowDto } from './dto/create-borrow.dto';
-import { RolesGuard } from 'src/auth/roles.guard';
+import { Permissions } from 'src/common/decorators/permissions.decorator';
 
+@Permissions('borrow')
 @Controller('borrow')
 export class BorrowController {
   constructor(private readonly borrowService: BorrowService) {}
 
-  // @UseGuards(new RolesGuard(['admin']))
   @Post()
   create(@Body() createBorrowDto: CreateBorrowDto) {
     return this.borrowService.create(createBorrowDto);
@@ -37,7 +37,6 @@ export class BorrowController {
     return this.borrowService.findOne(id);
   }
 
-  @UseGuards(new RolesGuard(['admin']))
   @Patch(':id')
   markReturned(@Param('id') id: string) {
     return this.borrowService.markReturned(id);

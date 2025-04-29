@@ -8,8 +8,6 @@ import {
 import { AuthService } from './auth.service';
 import { UsersService } from 'src/users/users.service';
 import { CreateUserDto } from 'src/users/dto/create-user.dto';
-import { RolesGuard } from './roles.guard';
-import { AuthGuard } from '@nestjs/passport';
 
 @Controller('auth')
 export class AuthController {
@@ -18,7 +16,6 @@ export class AuthController {
     private userService: UsersService,
   ) {}
 
-  @UseGuards(AuthGuard('jwt'), new RolesGuard(['admin']))
   @Post('register')
   async register(@Body() dto: CreateUserDto) {
     return this.userService.create(dto);
