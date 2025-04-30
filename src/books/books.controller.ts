@@ -53,7 +53,6 @@ export class BooksController {
   ) {
     const coverPath = file ? `/upload/images/${file.filename}` : null;
     createBookDto.cover = coverPath;
-    console.log(createBookDto);
     return this.booksService.create(createBookDto);
   }
 
