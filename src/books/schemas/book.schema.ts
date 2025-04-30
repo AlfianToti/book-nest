@@ -11,6 +11,9 @@ export class Book {
   @Prop({ required: true })
   year: number;
 
+  @Prop()
+  cover: string;
+
   @Prop({ required: false, default: false })
   deleted: boolean;
 }
