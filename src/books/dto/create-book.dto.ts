@@ -1,4 +1,11 @@
-import { IsNotEmpty, IsNumber, IsOptional } from 'class-validator';
+import { Transform } from 'class-transformer';
+import {
+  IsBoolean,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+} from 'class-validator';
 
 export class CreateBookDto {
   @IsNotEmpty()
@@ -7,10 +14,15 @@ export class CreateBookDto {
   @IsNotEmpty()
   author: string;
 
+  @Transform((year) => +year.value)
   @IsNotEmpty()
   @IsNumber()
   year: number;
 
   @IsOptional()
+  cover: string;
+
+  @IsOptional()
+  @IsBoolean()
   deleted: boolean;
 }
