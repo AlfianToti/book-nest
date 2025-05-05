@@ -9,6 +9,8 @@ import { Borrow } from './schemas/borrow.schema';
 import { Model } from 'mongoose';
 import { BooksService } from 'src/books/books.service';
 import { Connection } from 'mongoose';
+import { Cron, CronExpression } from '@nestjs/schedule';
+import { NotificationGateway } from 'src/notification/notification.gateway';
 
 @Injectable()
 export class BorrowService {
@@ -16,6 +18,7 @@ export class BorrowService {
     @InjectModel(Borrow.name) private readonly borrowModel: Model<Borrow>,
     private bookService: BooksService,
     @InjectConnection() private readonly con: Connection,
+    private notificationGate: NotificationGateway,
   ) {}
   async create(createBorrowDto: CreateBorrowDto): Promise<Borrow> {
     const session = await this.con.startSession();
@@ -76,7 +79,6 @@ export class BorrowService {
           as: 'books',
         },
       },
-      { $unwind: '$books' },
     ];
 
     if (search) {
@@ -145,6 +147,30 @@ export class BorrowService {
       throw error;
     } finally {
       session.endSession();
+    }
+  }
+
+  @Cron('*/5 * * * *')
+  async checkNearReturnBook() {
+    const today = new Date();
+    const sevenDays = new Date().setDate(today.getDate() + 7);
+
+    const datas = await this.borrowModel.find({
+      returned: false,
+      returnDate: {
+        $gte: today,
+        $lte: sevenDays,
+      },
+    });
+
+    for (const data of datas) {
+      const user = data.borrowerName;
+
+      this.notificationGate.sendNotificationToAdmin({
+        message: `${user} has returning book due soon`,
+        returnDate: data.returnDate,
+        borrowId: data._id,
+      });
     }
   }
 }

@@ -11,9 +11,12 @@ import {
   PrivilegeSchema,
 } from 'src/privileges/schemas/privilege.schema';
 import { BooksModule } from 'src/books/books.module';
+import { NotificationModule } from 'src/notification/notification.module';
+import { ScheduleModule } from '@nestjs/schedule';
 
 @Module({
   imports: [
+    ScheduleModule.forRoot(),
     MongooseModule.forFeature([
       { name: Borrow.name, schema: BorrowSchema },
       { name: Book.name, schema: BookSchema },
@@ -22,6 +25,7 @@ import { BooksModule } from 'src/books/books.module';
       { name: Privilege.name, schema: PrivilegeSchema },
     ]),
     BooksModule,
+    NotificationModule,
   ],
   controllers: [BorrowController],
   providers: [BorrowService],
