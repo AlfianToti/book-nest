@@ -12,7 +12,7 @@ import {
 export class CreateBorrowDto {
   @IsNotEmpty()
   @IsArray()
-  @IsMongoId({})
+  @IsMongoId({ each: true })
   books: string[];
 
   @IsNotEmpty({})
