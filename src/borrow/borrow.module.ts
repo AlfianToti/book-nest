@@ -10,22 +10,18 @@ import {
   Privilege,
   PrivilegeSchema,
 } from 'src/privileges/schemas/privilege.schema';
+import { BooksModule } from 'src/books/books.module';
 
 @Module({
   imports: [
     MongooseModule.forFeature([
-      {
-        name: Borrow.name,
-        schema: BorrowSchema,
-      },
-      {
-        name: Book.name,
-        schema: BookSchema,
-      },
+      { name: Borrow.name, schema: BorrowSchema },
+      { name: Book.name, schema: BookSchema },
       { name: User.name, schema: UserSchema },
       { name: Role.name, schema: RoleSchema },
       { name: Privilege.name, schema: PrivilegeSchema },
     ]),
+    BooksModule,
   ],
   controllers: [BorrowController],
   providers: [BorrowService],

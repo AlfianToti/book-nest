@@ -9,9 +9,11 @@ import {
 
 export class CreateBookDto {
   @IsNotEmpty()
+  @IsString()
   title: string;
 
   @IsNotEmpty()
+  @IsString()
   author: string;
 
   @Transform((year) => +year.value)
@@ -21,6 +23,10 @@ export class CreateBookDto {
 
   @IsOptional()
   cover: string;
+
+  @IsOptional()
+  @IsBoolean()
+  availability: boolean;
 
   @IsOptional()
   @IsBoolean()

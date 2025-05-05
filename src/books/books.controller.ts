@@ -51,7 +51,7 @@ export class BooksController {
     @Body() createBookDto: CreateBookDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const coverPath = file ? `/upload/images/${file.filename}` : null;
+    const coverPath = file ? `/uploads/images/${file.filename}` : null;
     createBookDto.cover = coverPath;
     return this.booksService.create(createBookDto);
   }
@@ -92,7 +92,7 @@ export class BooksController {
     @Body() updateData: CreateBookDto,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const coverPath = file ? `/upload/images/${file.filename}` : null;
+    const coverPath = file ? `/uploads/images/${file.filename}` : null;
     updateData.cover = coverPath;
     return this.booksService.update(id, updateData);
   }

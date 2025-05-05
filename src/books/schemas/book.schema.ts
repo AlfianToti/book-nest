@@ -11,10 +11,13 @@ export class Book {
   @Prop({ required: true })
   year: number;
 
-  @Prop()
+  @Prop({ required: true, default: null })
   cover: string;
 
-  @Prop({ required: false, default: false })
+  @Prop({ required: true, default: true })
+  availability: boolean;
+
+  @Prop({ required: true, default: false })
   deleted: boolean;
 }
 

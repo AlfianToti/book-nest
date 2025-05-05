@@ -21,5 +21,6 @@ import {
   ],
   providers: [BooksService],
   controllers: [BooksController],
+  exports: [BooksService],
 })
 export class BooksModule {}
