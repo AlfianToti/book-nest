@@ -60,7 +60,7 @@ export class RolesService {
   }
 
   async findOne(id: string) {
-    const role = await this.roleModel.findById(id).populate('privileges');
+    const role = await this.roleModel.findById(id).populate('permissions');
     if (!role) {
       throw new NotFoundException(`Role with id ${id} not found`);
     }
